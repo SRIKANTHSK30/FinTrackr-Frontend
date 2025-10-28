@@ -37,7 +37,7 @@ jobs:
   deploy-production:
     needs: [lint-and-build, deploy-staging]
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' # ✅ only when manually run
+    if: github.ref == 'refs/heads/main' 
     environment:
       name: production
       url: https://your-production-domain.com
