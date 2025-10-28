@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store';
 import { api } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { TrendingUp, TrendingDown, DollarSign, Wallet } from 'lucide-react';
 import type { DashboardData } from '@/types';
 import { TransactionList } from '@/components/transactions/TransactionList';

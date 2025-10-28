@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import Button from '@/components/ui/button';
+import Badge from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { Transaction } from '@/types';
 import { api } from '@/lib/api';

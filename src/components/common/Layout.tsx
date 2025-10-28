@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { useAuthStore } from '@/store';
 import { api } from '@/lib/api';
 import { LogOut, LayoutDashboard, FileText, Tag } from 'lucide-react';

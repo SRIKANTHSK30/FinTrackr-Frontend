@@ -22,7 +22,17 @@ export function SpendingChart({ data }: SpendingChartProps) {
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+            label={({ name, percent }: any) => (
+              <text
+                x={0}
+                y={0}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fill="#000"
+              >
+                {`${name} ${(percent * 100).toFixed(0)}%`}
+              </text>
+            )}
             outerRadius={80}
             fill="#8884d8"
             dataKey="value"

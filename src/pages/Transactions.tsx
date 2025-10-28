@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { api } from '@/lib/api';
 import type { Transaction } from '@/types';
 import { TransactionList } from '@/components/transactions/TransactionList';

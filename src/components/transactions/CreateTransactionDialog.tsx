@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -57,8 +57,9 @@ export function CreateTransactionDialog({
       reset();
       onSuccess();
       onOpenChange(false);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create transaction');
+    } catch (err) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(message || 'Failed to create transaction');
     } finally {
       setIsLoading(false);
     }
