@@ -28,7 +28,6 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
-  const [agree, setAgree] = useState(false);
   const {
     register,
     handleSubmit,
@@ -42,7 +41,7 @@ export default function Register() {
     setError('');
 
     try {
-      const { confirmPassword: _confirmPassword, ...registerData } = data;
+      const { confirmPassword, ...registerData } = data;
       const response = await api.auth.register(registerData);
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
@@ -213,8 +212,8 @@ export default function Register() {
             </div>
 
             {/* Sign Up Button */}
-            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
-            <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={isLoading || !agree}>
+
+            <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={isLoading}>
               {isLoading ? 'Creating account...' : 'Sign up'}
             </Button>
           </form>
