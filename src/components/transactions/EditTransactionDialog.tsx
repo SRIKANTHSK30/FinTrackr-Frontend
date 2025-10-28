@@ -64,7 +64,7 @@ export function EditTransactionDialog({
       await api.transactions.update({ 
         id: transaction.id, 
         ...data,
-        type: data.type as any,
+        type: data.type as 'CREDIT' | 'DEBIT',
       });
       onSuccess();
       onOpenChange(false);

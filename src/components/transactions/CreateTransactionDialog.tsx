@@ -52,7 +52,7 @@ export function CreateTransactionDialog({
     try {
       await api.transactions.create({
         ...data,
-        type: data.type as any,
+        type: data.type as 'CREDIT' | 'DEBIT',
       });
       reset();
       onSuccess();

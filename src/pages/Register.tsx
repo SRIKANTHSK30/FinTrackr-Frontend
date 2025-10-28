@@ -28,7 +28,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
-
+  const [agree, setAgree] = useState(false);
   const {
     register,
     handleSubmit,
@@ -42,14 +42,22 @@ export default function Register() {
     setError('');
 
     try {
-      const { confirmPassword, ...registerData } = data;
+      const { confirmPassword: _confirmPassword, ...registerData } = data;
       const response = await api.auth.register(registerData);
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
       setUser(response.user);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } catch (err: unknown) {
+    if (err instanceof Error) {
+      setError(err.message);
+    } 
+    else if (typeof err === 'object' && err !== null && 'response' in err) {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setError(axiosErr.response?.data?.message || 'Registration failed. Please try again.');
+    } else {
+      setError('Registration failed. Please try again.');
+    }
     } finally {
       setIsLoading(false);
     }
@@ -198,12 +206,15 @@ export default function Register() {
               />
               <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
                 I agree to the{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">Terms & Privacy</a>
+                <Link to="/terms" className="text-blue-600 hover:text-blue-700 font-medium">
+                  Terms & Privacy
+                </Link>
               </label>
             </div>
 
             {/* Sign Up Button */}
-            <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={isLoading}>
+            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+            <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={isLoading || !agree}>
               {isLoading ? 'Creating account...' : 'Sign up'}
             </Button>
           </form>

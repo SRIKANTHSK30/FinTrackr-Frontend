@@ -42,8 +42,10 @@ export default function Login() {
       localStorage.setItem('refreshToken', response.refreshToken);
       setUser(response.user);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } catch (err) {
+        const errorMessage = err instanceof Error ? err.message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Login failed. Please try again.';
+         setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
