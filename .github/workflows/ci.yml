@@ -35,9 +35,8 @@ jobs:
         # run: npm run deploy:staging
 
   deploy-production:
-    needs: lint-and-build
+    nneeds: [lint-and-build, deploy-staging]
     runs-on: ubuntu-latest
-    needs: build
     if: github.event_name == 'workflow_dispatch' # ✅ only when manually run
     environment:
       name: production
