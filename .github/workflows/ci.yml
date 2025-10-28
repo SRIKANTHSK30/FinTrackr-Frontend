@@ -35,7 +35,7 @@ jobs:
         # run: npm run deploy:staging
 
   deploy-production:
-    needs: [lint-and-build, deploy-staging]
+    needs: lint-and-build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' 
     environment:
