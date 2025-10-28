@@ -41,7 +41,7 @@ export default function Register() {
     setError('');
 
     try {
-      const { confirmPassword, ...registerData } = data;
+      const { confirmPassword: _confirmPassword, ...registerData } = data;
       const response = await api.auth.register(registerData);
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
