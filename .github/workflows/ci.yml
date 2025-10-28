@@ -2,9 +2,10 @@ name: Frontend CI/CD Pipeline
 
 on:
   push:
-    branches: [ develop, main ]
+    branches: [ develop ]
   pull_request:
-    branches: [ develop, main ]
+    branches: [ develop ]
+  workflow_dispatch: # 👈 manual trigger for production deploy
 
 permissions:
   contents: read
@@ -15,17 +16,15 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  # 🧪 Lint & Build
+  # 🧪 Lint + Build on each push or PR to develop
   build:
     name: Lint and Build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -33,56 +32,54 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run lint
+      - name: Lint code
         run: npm run lint --if-present
 
       - name: Build project
         run: npm run build
 
-      - name: Upload production-ready build
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
           path: dist
 
-  # 🚀 Deploy to Staging (develop)
+  # 🚀 Deploy automatically to STAGING after build on develop
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/develop'
     environment: staging
-
     steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: frontend-dist
           path: dist
 
-      - name: Deploy to Staging
+      - name: Deploy to STAGING
         run: |
-          echo "🚀 Deploying to STAGING..."
-          # Example command:
+          echo "🚀 Deploying to STAGING environment..."
+          # Replace this with your actual deploy command
           # scp -r dist/* ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/var/www/staging
 
-  # 🚀 Deploy to Production (main)
+  # 🚀 Manual Production Deployment (Triggered manually)
   deploy-production:
-    name: Deploy to Production
+    name: Deploy to Production (Manual)
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main'
-    environment: production
-
+    if: github.ref == 'refs/heads/develop'
+    environment:
+      name: production
+      url: https://your-production-domain.com
     steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: frontend-dist
           path: dist
 
-      - name: Deploy to Production
+      - name: Deploy to PRODUCTION
         run: |
-          echo "🚀 Deploying to PRODUCTION..."
-          # Example command:
+          echo "🚀 Manually deploying to PRODUCTION..."
+          # Example:
           # scp -r dist/* ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }}:/var/www/production
