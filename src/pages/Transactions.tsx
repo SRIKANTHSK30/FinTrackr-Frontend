@@ -17,8 +17,8 @@ export default function Transactions() {
 
   const loadTransactions = async () => {
     try {
-      const response = await api.transactions.getAll();
-      setTransactions(response.data);
+      const response = await api.transactions.getAll({ page: 1, limit: 50 });
+      setTransactions(response.transactions || []);
     } catch (error) {
       console.error('Failed to load transactions:', error);
     } finally {
