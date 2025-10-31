@@ -14,8 +14,8 @@ export default function Categories() {
 
   const loadCategories = async () => {
     try {
-      const data = await api.categories.getAll();
-      setCategories(data);
+      const response = await api.categories.getAll();
+      setCategories(response.categories || []);
     } catch (error) {
       console.error('Failed to load categories:', error);
     } finally {
@@ -49,14 +49,14 @@ export default function Categories() {
           <CardContent>
             {categories.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No categories yet.</p>
+                <p className="text-muted-foreground">No categories yet. Categories will be created automatically when you add transactions.</p>
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div

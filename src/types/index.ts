@@ -26,6 +26,7 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
+  message?: string;
   accessToken: string;
   refreshToken: string;
   user: User;
@@ -33,6 +34,10 @@ export interface AuthResponse {
 
 export interface RefreshTokenRequest {
   refreshToken: string;
+}
+
+export interface GoogleOAuthRequest {
+  idToken: string;
 }
 
 // Transaction types
@@ -47,7 +52,7 @@ export interface Transaction {
   id: string;
   userId: string;
   type: TransactionType;
-  amount: number;
+  amount: string | number; // Backend returns as string, but can be number for compatibility
   category: string;
   description?: string;
   date: string;
@@ -68,10 +73,10 @@ export interface UpdateTransactionRequest extends Partial<CreateTransactionReque
 }
 
 export interface TransactionSummary {
-  totalIncome: number;
-  totalExpense: number;
-  balance: number;
-  transactions: Transaction[];
+  totalIncome: string;
+  totalExpenses: string;
+  netBalance: string;
+  transactionCount: number;
 }
 
 // Category types
@@ -103,17 +108,18 @@ export interface UpdateCategoryRequest extends Partial<CreateCategoryRequest> {
 }
 
 export interface CategoryStats {
-  categoryId: string;
-  categoryName: string;
-  totalAmount: number;
+  categoryId?: string;
+  categoryName?: string;
+  totalAmount: string; // Backend returns as string
   transactionCount: number;
+  averageAmount?: string;
 }
 
 // Dashboard types
 export interface DashboardData {
-  totalIncome: number;
-  totalExpense: number;
-  balance: number;
+  totalIncome: string;
+  totalExpenses: string;
+  balance: string;
   recentTransactions: Transaction[];
   categoryBreakdown: CategoryStats[];
 }
@@ -130,7 +136,12 @@ export interface PaginatedResponse<T> {
 }
 
 export interface ApiError {
-  message: string;
+  error?: string;
+  message?: string;
+  details?: Array<{
+    field: string;
+    message: string;
+  }>;
   errors?: Record<string, string[]>;
 }
 
