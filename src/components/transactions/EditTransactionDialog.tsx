@@ -48,7 +48,7 @@ export function EditTransactionDialog({
     if (transaction) {
       reset({
         type: transaction.type as 'CREDIT' | 'DEBIT',
-        amount: transaction.amount,
+         amount: typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount,
         category: transaction.category,
         description: transaction.description || '',
         date: new Date(transaction.date).toISOString().split('T')[0],
@@ -61,15 +61,19 @@ export function EditTransactionDialog({
     setError('');
 
     try {
-      await api.transactions.update({ 
-        id: transaction.id, 
-        ...data,
+      await api.transactions.update({
+        id: transaction.id,
         type: data.type as 'CREDIT' | 'DEBIT',
+        amount: data.amount,
+        category: data.category,
+        description: data.description,
+        date: new Date(data.date).toISOString(), // Convert to ISO DateTime
       });
       onSuccess();
       onOpenChange(false);
     } catch (err) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
+      const message = axiosErr?.response?.data?.error || axiosErr?.response?.data?.message;
       setError(message || 'Failed to update transaction');
     } finally {
       setIsLoading(false);

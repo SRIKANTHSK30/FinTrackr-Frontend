@@ -49,23 +49,23 @@ export default function Dashboard() {
   const stats = [
     {
       name: 'Total Income',
-      value: `₹${dashboardData.totalIncome.toFixed(2)}`,
+      value: `₹${parseFloat(dashboardData.totalIncome || '0').toFixed(2)}`,
       icon: TrendingUp,
       trend: 'positive',
       description: 'All credits',
     },
     {
       name: 'Total Expense',
-      value: `₹${dashboardData.totalExpense.toFixed(2)}`,
+      value: `₹${parseFloat(dashboardData.totalExpenses || '0').toFixed(2)}`,
       icon: TrendingDown,
       trend: 'negative',
       description: 'All debits',
     },
     {
       name: 'Balance',
-      value: `₹${dashboardData.balance.toFixed(2)}`,
+      value: `₹${parseFloat(dashboardData.balance || '0').toFixed(2)}`,
       icon: DollarSign,
-      trend: dashboardData.balance >= 0 ? 'positive' : 'negative',
+      trend: parseFloat(dashboardData.balance || '0') >= 0 ? 'positive' : 'negative',
       description: 'Net balance',
     },
     {
