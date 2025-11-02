@@ -1,10 +1,12 @@
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '@/store';
 import type {
   LoginRequest,
   RegisterRequest,
   AuthResponse,
   RefreshTokenRequest,
+  GoogleOAuthRequest,
   User,
   UserProfile,
   Transaction,
@@ -16,7 +18,6 @@ import type {
   UpdateCategoryRequest,
   CategoryStats,
   DashboardData,
-  PaginatedResponse,
 } from '@/types';
 
 // API Configuration
@@ -65,7 +66,9 @@ class ApiClient {
             });
 
             localStorage.setItem('accessToken', data.accessToken);
-            localStorage.setItem('refreshToken', data.refreshToken);
+            if (data.refreshToken) {
+              localStorage.setItem('refreshToken', data.refreshToken);
+            }
 
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
@@ -76,6 +79,7 @@ class ApiClient {
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
+             useAuthStore.getState().logout();
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }
@@ -105,6 +109,16 @@ class ApiClient {
 
     logout: async (): Promise<void> => {
       await this.client.post('/auth/logout');
+    },
+    // Google OAuth - Redirect-based flow (backend spec: GET /auth/google)
+    googleOAuthRedirect: () => {
+      window.location.href = `${API_BASE_URL}/auth/google`;
+    },
+
+    // Google OAuth - Token-based flow (alternative implementation if backend supports POST)
+    googleOAuth: async (data: GoogleOAuthRequest): Promise<AuthResponse> => {
+      const response = await this.client.post('/auth/google', data);
+      return response.data;
     },
   };
 
@@ -137,7 +151,14 @@ class ApiClient {
       return response.data;
     },
 
-    getAll: async (params?: { page?: number; limit?: number }): Promise<PaginatedResponse<Transaction>> => {
+    getAll: async (params?: { 
+      page?: number; 
+      limit?: number; 
+      type?: string; 
+      category?: string; 
+      startDate?: string; 
+      endDate?: string;
+    }): Promise<{ transactions: Transaction[]; pagination: { total: number; page: number; limit: number; totalPages: number } }> => {
       const response = await this.client.get('/transactions', { params });
       return response.data;
     },
@@ -157,8 +178,8 @@ class ApiClient {
       await this.client.delete(`/transactions/${id}`);
     },
 
-    getSummary: async (): Promise<TransactionSummary> => {
-      const response = await this.client.get('/transactions/summary');
+    getSummary: async (params?: { startDate?: string; endDate?: string }): Promise<TransactionSummary> => {
+      const response = await this.client.get('/transactions/summary', { params });
       return response.data;
     },
   };
@@ -170,8 +191,9 @@ class ApiClient {
       return response.data;
     },
 
-    getAll: async (): Promise<Category[]> => {
-      const response = await this.client.get('/categories');
+    getAll: async (type?: string): Promise<{ categories: Category[] }> => {
+      const params = type ? { type } : {};
+      const response = await this.client.get('/categories', { params });
       return response.data;
     },
 
@@ -190,8 +212,8 @@ class ApiClient {
       await this.client.delete(`/categories/${id}`);
     },
 
-    getStats: async (id: string): Promise<CategoryStats> => {
-      const response = await this.client.get(`/categories/${id}/stats`);
+    getStats: async (id: string, params?: { startDate?: string; endDate?: string }): Promise<CategoryStats> => {
+      const response = await this.client.get(`/categories/${id}/stats`, { params });
       return response.data;
     },
   };

@@ -18,13 +18,12 @@ export function IncomeExpenseChart({ transactions }: IncomeExpenseChartProps) {
     );
 
     return {
-      date: dateStr,
-      Income: dayTransactions
+      date: dateStr,Income: dayTransactions
         .filter((t) => t.type === 'CREDIT')
-        .reduce((sum, t) => sum + t.amount, 0),
+        .reduce((sum, t) => sum + Number(t.amount), 0),
       Expense: dayTransactions
         .filter((t) => t.type === 'DEBIT')
-        .reduce((sum, t) => sum + t.amount, 0),
+        .reduce((sum, t) => sum + Number(t.amount), 0),
     };
   });
 
