@@ -51,14 +51,18 @@ export function CreateTransactionDialog({
 
     try {
       await api.transactions.create({
-        ...data,
         type: data.type as 'CREDIT' | 'DEBIT',
+        amount: data.amount,
+        category: data.category,
+        description: data.description,
+        date: new Date(data.date).toISOString(), // Convert to ISO DateTime
       });
       reset();
       onSuccess();
       onOpenChange(false);
     } catch (err) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
+      const message = axiosErr?.response?.data?.error || axiosErr?.response?.data?.message;
       setError(message || 'Failed to create transaction');
     } finally {
       setIsLoading(false);
