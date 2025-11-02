@@ -83,6 +83,7 @@ export default function Register() {
     }
   };
 
+
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Registration Form */}

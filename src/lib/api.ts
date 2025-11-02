@@ -90,6 +90,7 @@ class ApiClient {
     );
   }
 
+
   // Auth endpoints
   auth = {
     login: async (data: LoginRequest): Promise<AuthResponse> => {
@@ -110,6 +111,7 @@ class ApiClient {
     logout: async (): Promise<void> => {
       await this.client.post('/auth/logout');
     },
+
     // Google OAuth - Redirect-based flow (backend spec: GET /auth/google)
     googleOAuthRedirect: () => {
       window.location.href = `${API_BASE_URL}/auth/google`;
