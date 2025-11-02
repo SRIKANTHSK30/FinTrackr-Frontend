@@ -73,7 +73,7 @@ export function TransactionList({ transactions, onUpdate }: TransactionListProps
                 {transaction.description || '-'}
               </TableCell>
               <TableCell className={`text-right font-semibold ${transaction.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'}`}>
-                {transaction.type === 'CREDIT' ? '+' : '-'}₹{typeof transaction.amount === 'string' ? parseFloat(transaction.amount || '0').toFixed(2) : transaction.amount.toFixed(2)}
+                 {transaction.type === 'CREDIT' ? '+' : '-'}₹{typeof transaction.amount === 'string' ? parseFloat(transaction.amount || '0').toFixed(2) : transaction.amount.toFixed(2)}
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">

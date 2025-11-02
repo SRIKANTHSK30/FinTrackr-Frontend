@@ -48,7 +48,7 @@ export function EditTransactionDialog({
     if (transaction) {
       reset({
         type: transaction.type as 'CREDIT' | 'DEBIT',
-        amount: typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount,
+         amount: typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount,
         category: transaction.category,
         description: transaction.description || '',
         date: new Date(transaction.date).toISOString().split('T')[0],

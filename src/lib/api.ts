@@ -79,7 +79,7 @@ class ApiClient {
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
-            useAuthStore.getState().logout();
+             useAuthStore.getState().logout();
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }

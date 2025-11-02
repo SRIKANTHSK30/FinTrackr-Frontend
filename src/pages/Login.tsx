@@ -44,8 +44,8 @@ export default function Login() {
       setUser(response.user);
       navigate('/dashboard');
     } catch (err) {
-      const axiosErr = err as { response?: { status?: number; data?: { error?: string; message?: string } } };
-      
+        const axiosErr = err as { response?: { status?: number; data?: { error?: string; message?: string } } };
+
       if (axiosErr?.response?.status === 404) {
         setError('Login endpoint not found. Please check your backend configuration.');
       } else if (axiosErr?.response?.status === 401) {
@@ -171,12 +171,14 @@ export default function Login() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              {isLoading ? 'Redirecting...' : 'Log in with Google'}
+             {isLoading ? 'Redirecting...' : 'Log in with Google'}
             </Button>
             <Button
               variant="outline"
               className="w-full h-12 border-2 gap-3"
               type="button"
+              onClick={() => api.auth.googleOAuthRedirect()}
+              disabled={isLoading}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M17.05 20.28c-.98.95-2.05.95-3.03 0l-4.7-4.54a8.8 8.8 0 01-2.93-6.63c0-5.33 4.3-9.7 9.64-9.7a9.68 9.68 0 016.99 2.9 9.76 9.76 0 012.87 6.95c0 2.6-1.07 4.86-2.93 6.63l-4.71 4.54zm2.96-16.95c-.85-.82-2.05-1.28-3.44-1.28-3.1 0-5.64 2.56-5.64 5.7 0 1.62.66 3.04 1.73 4.07l4.7 4.54c.4.38.88.38 1.28 0l4.71-4.55c1.07-1.02 1.74-2.45 1.74-4.07 0-1.4-.47-2.6-1.28-3.41z"/>

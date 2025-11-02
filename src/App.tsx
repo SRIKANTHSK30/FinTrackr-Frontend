@@ -21,7 +21,7 @@ function AuthCallback() {
     if (accessToken && refreshToken) {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-      
+
       // Fetch user profile
       api.user.getProfile()
         .then((user) => {
@@ -47,7 +47,6 @@ function AuthCallback() {
     </div>
   );
 }
-
 function App() {
   const { isAuthenticated, setLoading } = useAuthStore();
 

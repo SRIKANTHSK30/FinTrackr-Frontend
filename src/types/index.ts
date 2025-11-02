@@ -52,7 +52,7 @@ export interface Transaction {
   id: string;
   userId: string;
   type: TransactionType;
-  amount: string | number; // Backend returns as string, but can be number for compatibility
+   amount: string | number; // Backend returns as string, but can be number for compatibility
   category: string;
   description?: string;
   date: string;

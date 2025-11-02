@@ -14,7 +14,7 @@ export default function Categories() {
 
   const loadCategories = async () => {
     try {
-      const response = await api.categories.getAll();
+       const response = await api.categories.getAll();
       setCategories(response.categories || []);
     } catch (error) {
       console.error('Failed to load categories:', error);
@@ -56,7 +56,7 @@ export default function Categories() {
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div
