@@ -49,21 +49,121 @@ export function CreateTransactionDialog({
     setIsLoading(true);
     setError('');
 
+    // Validate required fields
+    if (!data.date) {
+      setError('Date is required');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!data.category || !data.category.trim()) {
+      setError('Category is required');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!data.amount || data.amount <= 0) {
+      setError('Amount must be greater than 0');
+      setIsLoading(false);
+      return;
+    }
+
+    // Build payload, excluding undefined values
+    const payload: { type: 'CREDIT' | 'DEBIT'; amount: number; category: string; description?: string; date: string } = {
+      type: data.type as 'CREDIT' | 'DEBIT',
+      amount: data.amount,
+      category: data.category.trim(),
+      date: data.date, // YYYY-MM-DD format - backend uses z.coerce.date() to convert to Date
+    };
+
+    // Only include description if it's not empty
+    if (data.description && data.description.trim()) {
+      payload.description = data.description.trim();
+    }
+
+    console.log('Creating transaction with payload:', payload);
+
     try {
-      await api.transactions.create({
-        type: data.type as 'CREDIT' | 'DEBIT',
-        amount: data.amount,
-        category: data.category,
-        description: data.description,
-        date: new Date(data.date).toISOString(), // Convert to ISO DateTime
-      });
+      await api.transactions.create(payload);
       reset();
       onSuccess();
       onOpenChange(false);
     } catch (err) {
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
-      const message = axiosErr?.response?.data?.error || axiosErr?.response?.data?.message;
-      setError(message || 'Failed to create transaction');
+      const axiosErr = err as { response?: { data?: unknown; status?: number } };
+      const errorData = axiosErr?.response?.data as { error?: string; message?: string; details?: unknown[]; errors?: Record<string, string | string[]> } | undefined;
+      
+      console.error('Transaction creation error:', {
+        status: axiosErr?.response?.status,
+        data: errorData,
+        details: errorData?.details,
+      });
+      
+      // Log full details for debugging
+      if (errorData?.details && Array.isArray(errorData.details)) {
+        console.error('Validation details:', JSON.stringify(errorData.details, null, 2));
+      }
+      
+      const message = errorData?.error || errorData?.message;
+      let errorMessage = '';
+      
+      // Handle validation errors in details array
+      if (errorData?.details && Array.isArray(errorData.details) && errorData.details.length > 0) {
+        const detailsMessages = errorData.details.map((d: unknown) => {
+          if (typeof d === 'string') {
+            return d;
+          } else if (typeof d === 'object' && d !== null) {
+            const detail = d as { 
+              field?: string; 
+              path?: string[] | string | number; 
+              message?: string; 
+              msg?: string;
+              code?: string;
+              expected?: string;
+              received?: string;
+            };
+            
+            // Handle Zod error structure
+            const path = Array.isArray(detail.path) 
+              ? detail.path.filter(p => p !== undefined && p !== null).join('.')
+              : (detail.path !== undefined && detail.path !== null ? String(detail.path) : '');
+            
+            const fieldName = detail.field || path || 'Unknown field';
+            
+            // Construct a user-friendly error message
+            if (detail.message) {
+              return `${fieldName}: ${detail.message}`;
+            } else if (detail.msg) {
+              return `${fieldName}: ${detail.msg}`;
+            } else if (detail.code === 'invalid_type' && detail.expected && detail.received) {
+              return `${fieldName}: Expected ${detail.expected}, but received ${detail.received}`;
+            } else {
+              return `${fieldName}: Validation failed`;
+            }
+          }
+          return JSON.stringify(d);
+        });
+        errorMessage = detailsMessages.join(', ');
+      } 
+      // Handle validation errors in errors object
+      else if (errorData?.errors) {
+        if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+          const errors = Object.entries(errorData.errors)
+            .map(([field, messages]) => {
+              const msg = Array.isArray(messages) ? messages.join(', ') : String(messages);
+              return `${field}: ${msg}`;
+            })
+            .join('; ');
+          errorMessage = errors;
+        } else {
+          errorMessage = String(errorData.errors);
+        }
+      }
+      // Fallback to message or full error data
+      else {
+        errorMessage = message || JSON.stringify(errorData) || 'Failed to create transaction';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

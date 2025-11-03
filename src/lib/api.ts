@@ -150,7 +150,8 @@ class ApiClient {
   transactions = {
     create: async (data: CreateTransactionRequest): Promise<Transaction> => {
       const response = await this.client.post('/transactions', data);
-      return response.data;
+      // Backend returns { message, transaction }, so extract transaction
+      return (response.data as { transaction: Transaction }).transaction || response.data;
     },
 
     getAll: async (params?: { 
@@ -167,13 +168,15 @@ class ApiClient {
 
     getById: async (id: string): Promise<Transaction> => {
       const response = await this.client.get(`/transactions/${id}`);
-      return response.data;
+      // Backend returns { transaction }, so extract transaction
+      return (response.data as { transaction: Transaction }).transaction || response.data;
     },
 
     update: async (data: UpdateTransactionRequest): Promise<Transaction> => {
       const { id, ...updateData } = data;
       const response = await this.client.put(`/transactions/${id}`, updateData);
-      return response.data;
+      // Backend returns { message, transaction }, so extract transaction
+      return (response.data as { transaction: Transaction }).transaction || response.data;
     },
 
     delete: async (id: string): Promise<void> => {
