@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DashboardTopBar } from '@/components/dashboard/DashboardTopBar';
 import { CashFlowChart } from '@/components/dashboard/CashFlowChart';
 import { SpendingChart } from '@/components/dashboard/SpendingChart';
 import { PaymentSchedule } from '@/components/dashboard/PaymentSchedule';
@@ -80,9 +79,6 @@ export default function Dashboard() {
 
   return (
     <div className="bg-[#141414] min-h-screen">
-      {/* Top Bar */}
-      <DashboardTopBar />
-
       <div className="p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Summary Cards */}
