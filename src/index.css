@@ -95,3 +95,8 @@
     @apply bg-background text-foreground;
   }
 }
+html, body, #root {
+  margin: 1;
+  padding: 0;
+  height: 100%;
+}
