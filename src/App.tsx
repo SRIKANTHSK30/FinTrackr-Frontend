@@ -14,7 +14,7 @@ import Transactions from "@/pages/Transactions";
 import Categories from "@/pages/Categories";
 import { useAuthStore } from "@/store";
 import { api } from "@/lib/api";
-import { Layout } from "@/components/common/Layout"; // ✅ Unified layout (with sidebar + navbar)
+
 
 // 🔄 Google OAuth Callback Handler
 function AuthCallback() {
@@ -101,13 +101,7 @@ function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
 
         {/* 🧭 Protected Routes wrapped with unified Layout */}
-        <Route
-          element={
-            <ProtectedRoute>
-              <Layout /> {/* ✅ Sidebar + Navbar */}
-            </ProtectedRoute>
-          }
-        >
+        <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/categories" element={<Categories />} />
