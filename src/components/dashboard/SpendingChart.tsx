@@ -1,8 +1,7 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Button from '@/components/ui/button';
 import type { CategoryStats } from '@/types';
-import type { PieLabelRenderProps } from 'recharts';
 
 interface SpendingChartProps {
   data: CategoryStats[];
