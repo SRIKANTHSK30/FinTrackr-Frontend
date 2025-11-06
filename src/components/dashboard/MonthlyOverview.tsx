@@ -49,7 +49,7 @@ export function MonthlyOverview({ totalIncome, totalExpenses, savings }: Monthly
                   outerRadius={50}
                   dataKey="value"
                 >
-                  {data.map((entry, index) => (
+                  {data.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
