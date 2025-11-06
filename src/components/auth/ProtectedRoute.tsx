@@ -1,12 +1,8 @@
-import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/store';
-import { Layout } from '@/components/common/Layout';
+import { Navigate } from "react-router-dom";
+import { useAuthStore } from "@/store";
+import { Layout } from "@/components/common/Layout";
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
+export function ProtectedRoute() {
   const { isAuthenticated, isLoading } = useAuthStore();
 
   if (isLoading) {
@@ -24,6 +20,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/login" replace />;
   }
 
-  return <Layout>{children}</Layout>;
+  // ✅ Just render Layout — it already has <Outlet /> inside
+  return <Layout />;
 }
-
