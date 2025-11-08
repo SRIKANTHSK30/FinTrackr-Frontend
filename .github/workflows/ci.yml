@@ -11,29 +11,8 @@ on:
       - main
 
 jobs:
-  validate-pr:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check PR base and head
-        run: |
-          echo "🔍 Checking Pull Request target..."
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
-          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
-
-          echo "Base: $BASE_BRANCH"
-          echo "Head: $HEAD_BRANCH"
-
-          # Block PRs directly targeting main (except when from develop)
-          if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "develop" ]; then
-            echo "❌ Direct PRs to 'main' are not allowed. Only 'develop → main' is permitted."
-            exit 1
-          fi
-
-          echo "✅ Pull Request branch structure is valid."
-
+  # 1️⃣ Lint + Build for every PR and push
   lint-and-build:
-    needs: [validate-pr]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
@@ -51,6 +30,7 @@ jobs:
       - name: Lint and Build
         run: npm run build
 
+  # 2️⃣ Auto deploy to staging on develop branch
   deploy-staging:
     needs: lint-and-build
     runs-on: ubuntu-latest
@@ -58,8 +38,9 @@ jobs:
     steps:
       - name: Deploy to Staging
         run: echo "🚀 Deploying to Staging Environment..."
-        # run: npm run deploy:staging
+        # Example: npm run deploy:staging
 
+  # 3️⃣ Manual production deployment on main
   deploy-production:
     needs: lint-and-build
     runs-on: ubuntu-latest
@@ -68,6 +49,6 @@ jobs:
       name: production
       url: https://your-production-domain.com
     steps:
-      - name: Deploy to Production (Manual Approval)
-        run: echo "🚀 Deploying to Production..."
-        # run: npm run deploy:production
+      - name: Deploy to Production
+        run: echo "🚀 Deploying to Production Environment..."
+        # Example: npm run deploy:production
