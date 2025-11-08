@@ -66,15 +66,27 @@ export function EditTransactionDialog({
         type: data.type as 'CREDIT' | 'DEBIT',
         amount: data.amount,
         category: data.category,
-        description: data.description,
-        date: new Date(data.date).toISOString(), // Convert to ISO DateTime
+        description: data.description?.trim() || undefined,
+        date: data.date, // YYYY-MM-DD format - backend uses z.coerce.date() to convert to Date
       });
       onSuccess();
       onOpenChange(false);
     } catch (err) {
-      const axiosErr = err as { response?: { data?: { error?: string; message?: string } } };
+      const axiosErr = err as { response?: { data?: { error?: string; message?: string; details?: Array<{ field: string; message: string }>; errors?: Record<string, string[]> } } };
       const message = axiosErr?.response?.data?.error || axiosErr?.response?.data?.message;
-      setError(message || 'Failed to update transaction');
+      
+      // If there are validation errors, format them nicely
+      if (axiosErr?.response?.data?.details && Array.isArray(axiosErr.response.data.details)) {
+        const details = axiosErr.response.data.details.map(d => `${d.field}: ${d.message}`).join(', ');
+        setError(details || message || 'Failed to update transaction');
+      } else if (axiosErr?.response?.data?.errors) {
+        const errors = Object.entries(axiosErr.response.data.errors)
+          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+          .join('; ');
+        setError(errors || message || 'Failed to update transaction');
+      } else {
+        setError(message || 'Failed to update transaction');
+      }
     } finally {
       setIsLoading(false);
     }
