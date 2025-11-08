@@ -169,7 +169,7 @@ export function Layout() {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-6 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+        <main className="flex-1 overflow-y-auto text-gray-900 dark:text-gray-100 transition-colors duration-300">
           <Outlet />
         </main>
       </div>

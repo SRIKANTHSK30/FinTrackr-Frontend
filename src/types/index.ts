@@ -58,6 +58,7 @@ export interface Transaction {
   date: string;
   createdAt: string;
   updatedAt: string;
+  status?: 'completed' | 'processing';
 }
 
 export interface CreateTransactionRequest {
@@ -122,7 +123,26 @@ export interface DashboardData {
   balance: string;
   recentTransactions: Transaction[];
   categoryBreakdown: CategoryStats[];
+  topCategories?: { name: string; amount: number }[];
+
+  // NEW FIELDS for trends
+  balanceTrend?: number[];
+  balanceChangePercentage?: number;
+  incomeTrend?: number[];
+  incomeChangePercentage?: number;
+  expenseTrend?: number[];
+  expenseChangePercentage?: number;
+  savingsTrend?: number[];
+  savingsChangePercentage?: number;
+
+   challenge?: {
+    title: string;
+    description: string;
+    target: number;
+    current: number;
+  };
 }
+
 
 // API Response types
 export interface PaginatedResponse<T> {
