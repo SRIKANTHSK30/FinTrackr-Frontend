@@ -12,7 +12,7 @@ export function Layout() {
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const isDashboardRoute = ["/dashboard", "/transactions", "/categories"].some(
+  const isDashboardRoute = ["/dashboard","/atm-cards", "/transactions", "/categories"].some(
     (path) => location.pathname.startsWith(path)
   );
 

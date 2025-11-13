@@ -1,3 +1,4 @@
+// src/utils/api.ts
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store';
@@ -18,9 +19,28 @@ import type {
   UpdateCategoryRequest,
   CategoryStats,
   DashboardData,
+  UpdateCardPayload,
 } from '@/types';
 
-// API Configuration
+// --- Card types ---
+export interface CardPayload {
+  type: string;
+  holder: string;
+  number: string;
+  expiry: string;
+  balance: number;
+  bank: string;
+  gradient?: string;
+  border?: string;
+}
+
+export interface Card extends CardPayload {
+  id: string;
+  status: string;
+  created_at: string;
+}
+
+// --- API Base URL ---
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 class ApiClient {
@@ -57,18 +77,14 @@ class ApiClient {
 
           try {
             const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
-              throw new Error('No refresh token');
-            }
+            if (!refreshToken) throw new Error('No refresh token');
 
             const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
               refreshToken,
             });
 
             localStorage.setItem('accessToken', data.accessToken);
-            if (data.refreshToken) {
-              localStorage.setItem('refreshToken', data.refreshToken);
-            }
+            if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
 
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
@@ -79,7 +95,7 @@ class ApiClient {
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
-             useAuthStore.getState().logout();
+            useAuthStore.getState().logout();
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }
@@ -90,8 +106,7 @@ class ApiClient {
     );
   }
 
-
-  // Auth endpoints
+  // --- Auth endpoints ---
   auth = {
     login: async (data: LoginRequest): Promise<AuthResponse> => {
       const response = await this.client.post('/auth/login', data);
@@ -112,19 +127,17 @@ class ApiClient {
       await this.client.post('/auth/logout');
     },
 
-    // Google OAuth - Redirect-based flow (backend spec: GET /auth/google)
     googleOAuthRedirect: () => {
       window.location.href = `${API_BASE_URL}/auth/google`;
     },
 
-    // Google OAuth - Token-based flow (alternative implementation if backend supports POST)
     googleOAuth: async (data: GoogleOAuthRequest): Promise<AuthResponse> => {
       const response = await this.client.post('/auth/google', data);
       return response.data;
     },
   };
 
-  // User endpoints
+  // --- User endpoints ---
   user = {
     getProfile: async (): Promise<User> => {
       const response = await this.client.get('/users/profile');
@@ -146,11 +159,10 @@ class ApiClient {
     },
   };
 
-  // Transaction endpoints
+  // --- Transaction endpoints ---
   transactions = {
     create: async (data: CreateTransactionRequest): Promise<Transaction> => {
       const response = await this.client.post('/transactions', data);
-      // Backend returns { message, transaction }, so extract transaction
       return (response.data as { transaction: Transaction }).transaction || response.data;
     },
 
@@ -168,14 +180,12 @@ class ApiClient {
 
     getById: async (id: string): Promise<Transaction> => {
       const response = await this.client.get(`/transactions/${id}`);
-      // Backend returns { transaction }, so extract transaction
       return (response.data as { transaction: Transaction }).transaction || response.data;
     },
 
     update: async (data: UpdateTransactionRequest): Promise<Transaction> => {
       const { id, ...updateData } = data;
       const response = await this.client.put(`/transactions/${id}`, updateData);
-      // Backend returns { message, transaction }, so extract transaction
       return (response.data as { transaction: Transaction }).transaction || response.data;
     },
 
@@ -189,7 +199,7 @@ class ApiClient {
     },
   };
 
-  // Category endpoints
+  // --- Category endpoints ---
   categories = {
     create: async (data: CreateCategoryRequest): Promise<Category> => {
       const response = await this.client.post('/categories', data);
@@ -222,7 +232,33 @@ class ApiClient {
       return response.data;
     },
   };
+
+  // --- Card endpoints ---
+  cards = {
+    getAll: async (): Promise<Card[]> => {
+      const response = await this.client.get('/cards');
+      return response.data;
+    },
+
+    getById: async (id: string): Promise<Card> => {
+      const response = await this.client.get(`/cards/${id}`);
+      return response.data;
+    },
+
+    create: async (data: CardPayload): Promise<Card> => {
+      const response = await this.client.post('/cards', data);
+      return response.data;
+    },
+
+    update: async (id: string, data: UpdateCardPayload): Promise<Card> => {
+      const response = await this.client.put(`/cards/${id}`, data);
+      return response.data;
+    },
+
+    delete: async (id: string): Promise<void> => {
+      await this.client.delete(`/cards/${id}`);
+    },
+  };
 }
 
 export const api = new ApiClient();
-
