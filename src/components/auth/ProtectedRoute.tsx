@@ -17,9 +17,10 @@ export function ProtectedRoute() {
   }
 
   if (!isAuthenticated) {
+    // ❌ Don't put <Toaster /> here; place it at App root
     return <Navigate to="/login" replace />;
   }
 
-  // ✅ Just render Layout — it already has <Outlet /> inside
+  // ✅ Render Layout (which already contains <Outlet />)
   return <Layout />;
 }

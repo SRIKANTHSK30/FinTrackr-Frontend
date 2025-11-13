@@ -165,3 +165,39 @@ export interface ApiError {
   errors?: Record<string, string[]>;
 }
 
+// Card types
+export interface Card {
+  id: string | number;
+  type: string;
+  holder: string;
+  number: string;
+  balance: string | number;
+  expiry: string;
+  status?: "Active" | "Inactive";
+  bank: string;
+  gradient?: string;
+  border?: string;
+  masked?: string;
+  default?: boolean;
+  
+}
+
+export interface CardPayload {
+  type: string;
+  holder: string;
+  number: string;
+  balance: number;
+  expiry: string;
+  bank: string;
+  status?: string;
+}
+
+export interface UpdateCardPayload {
+  type?: string;
+  holder?: string;
+  number?: string;
+  balance?: number;
+  expiry?: string;
+  bank?: string;
+  status?: "Active" | "Inactive";
+}
